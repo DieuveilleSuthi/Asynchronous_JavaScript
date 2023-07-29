@@ -26,9 +26,9 @@ getCountries('congo-brazzaville');
 getCountries('usa');
 getCountries('france');
 */
-const renderCountry = function(data){
+const renderCountry = function(data, className = ''){
     const html = `
-    <article class="country">
+    <article class="country ${className}">
       <img class="country__img" src="${Object.values(data[0].flags)[0]}" />
       <div class="country__data">
         <h3 class="country__name">${Object.values(data[0].name)[0]}</h3>
@@ -44,9 +44,22 @@ const renderCountry = function(data){
 }
 
 const getCountryData = function(countrie){
+    // Country 1
     fetch(`https://restcountries.com/v3.1/name/${countrie}`)
     .then(response => response.json())
-    .then(data => renderCountry(data));
+    .then(data => {
+        renderCountry(data);
+        console.log(data);
+        const neighbour = data[0].borders[0];
+
+        if (!neighbour) return;
+
+        // Country 2
+
+        return fetch(`https://restcountries.com/v3.1/alpha/${neighbour}`)
+        .then(response => response.json())
+        .then(data => renderCountry(data, 'neighbour'));
+    });
 };
 
 getCountryData('portugal');      
